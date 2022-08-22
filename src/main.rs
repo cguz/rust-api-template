@@ -1,10 +1,11 @@
 //! # Reckon API
-//! 
-//! API for requesting data and computing information for the DAO project. 
+//!
+//! API for requesting data and computing information for the DAO project
 //! The API works for both use cases, Space Trafic Management and Spacecraft Resource Management.
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -12,12 +13,11 @@ fn index() -> &'static str {
 }
 
 // # Space Trafic Management
-// 
+//
 // API for the Space Trafic Management
 mod stm {
 
     use std::fs::File;
-    use std::io::Write;
     use std::path::Path;
     use serde::{Deserialize, Serialize};
 
@@ -45,9 +45,9 @@ mod stm {
         NotFound,
     }
 
-    fn find_object(json : &CatalogSTM, name_object: &String) -> Result<String, CatalogError> {
+    fn find_object(json : &CatalogSTM, name_object: &str) -> Result<String, CatalogError> {
         for obj in json.objects.iter(){
-            if  obj.name.as_str() == name_object.as_str() {
+            if  obj.name.as_str() == name_object {
                 let result = serde_json::to_string(&obj).unwrap();
                 return Ok(result);
             }
@@ -64,12 +64,10 @@ mod stm {
 
         let object = find_object(&json, &name_object);
 
-        let result = match object {
+        match object {
             Err(CatalogError::NotFound) => serde_json::to_string(&json).unwrap(),
             Ok(obj) => obj,
-        };
-
-        result
+        }
     }
 
     /// retrieve possible CDM of a given satellite
@@ -81,17 +79,13 @@ mod stm {
 
         let object = find_object(&json, &name_object);
 
-        let result = match object {
+        match object {
             Err(CatalogError::NotFound) => serde_json::to_string(&json).unwrap(),
             Ok(obj) => { 
                 let json_object : Object = serde_json::from_str(obj.as_str()).expect("JSON was not well-formatted"); 
-                let str_json_object = serde_json::to_string(&json_object.cdm).unwrap();
-                return str_json_object;
+                serde_json::to_string(&json_object.cdm).unwrap()
             },
-        };
-
-
-        result
+        }
     }
 
     /// retrieve CDM information of two objects
@@ -104,7 +98,7 @@ mod stm {
 
         let object = find_object(&json, &first_object);
 
-        let result = match object {
+        match object {
             Err(CatalogError::NotFound) => serde_json::to_string(&json).unwrap(),
             Ok(obj) => { 
                 let json_object : Object = serde_json::from_str(obj.as_str()).expect("JSON was not well-formatted"); 
@@ -114,11 +108,9 @@ mod stm {
                         return str_json_object;
                     }
                 }
-                return "not found".to_string();
+                "not found".to_string()
             },
-        };
-
-        result
+        }
     }
 
     /// Retrieve a list of possible CDM
@@ -127,8 +119,7 @@ mod stm {
         let file = File::open(Path::new("./json/").join("data_stm.json")).expect("file should open read only");
         let json : CatalogSTM = serde_json::from_reader(file).expect("JSON was not well-formatted"); // serde_json::Value
         
-        let result = serde_json::to_string(&json.cdm_list).unwrap();
-        result
+        serde_json::to_string(&json.cdm_list).unwrap()
     }
 }
 
