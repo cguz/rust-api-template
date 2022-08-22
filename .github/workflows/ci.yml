@@ -24,4 +24,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - run: cargo clippy --all -- -D warnings
+    - run:  | 
+       rustup default nightly
+       cargo clippy --all -- -D warnings
