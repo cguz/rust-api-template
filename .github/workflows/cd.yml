@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run:  | 
-          rustup default nightly
-          cargo run
+      # - run:  | 
+      #    rustup default nightly
+      #    cargo run
 
-      - uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: $
-          publish_dir: ./
+      #- uses: peaceiris/actions-gh-pages@v3
+      #  if: github.ref == 'refs/heads/main'
+      #  with:
+      #    github_token: $
+      #    publish_dir: ./
